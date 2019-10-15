@@ -29,12 +29,32 @@ pipeline {
 
         stage('Local Tests') {
             parallel {
-                //   stage("Static Code Checks") { steps { stageStaticCodeChecks script: this } }
-                stage("Backend Unit Tests") { steps { stageUnitTests script: this } }
-                stage("Backend Integration Tests") { steps { stageIntegrationTests script: this } }
+                stage("Static Code Checks") {
+                    when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
+                    steps { stageStaticCodeChecks script: this }
+                }
+                stage("Lint") {
+                    steps { stageLint script: this }
+                }
+                stage("Backend Unit Tests") {
+                    when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
+                    steps { stageUnitTests script: this }
+                }
+                stage("Backend Integration Tests") {
+                    when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
+                    steps { stageBackendIntegrationTests script: this }
+                }
+                stage("Frontend Integration Tests") {
+                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
+                    steps { stageFrontendIntegrationTests script: this }
+                }
                 stage("Frontend Unit Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONT_END_TESTS } }
+                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
                     steps { stageFrontendUnitTests script: this }
+                }
+                stage("NPM Dependency Audit") {
+                    when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
+                    steps { stageNpmAudit script: this }
                 }
             }
         }
