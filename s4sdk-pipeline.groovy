@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 final def pipelineSdkVersion = 'master'
-def milestonestate
+
 pipeline {
     agent any
     options {
@@ -15,18 +15,15 @@ pipeline {
             steps {
                 milestone 10
                 library "s4sdk-pipeline-library@${pipelineSdkVersion}"
-                //stageInitS4sdkPipeline script: this
-                //abortOldBuilds script: this
-
+                stageInitS4sdkPipeline script: this
+                abortOldBuilds script: this
             }
         }
 
         stage('Build') {
             steps {
                 milestone 20
-
-
-               // stageBuild script: this
+                stageBuild script: this
             }
         }
 
@@ -34,51 +31,30 @@ pipeline {
             parallel {
                 stage("Static Code Checks") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
-                    steps {
-                        milestone 10
-                    // stageStaticCodeChecks script: this
-                    }
+                    steps { stageStaticCodeChecks script: this }
                 }
                 stage("Lint") {
-                    steps {
-                   //     stageLint script: this
-                        milestone 10
-                    }
+                    steps { stageLint script: this }
                 }
                 stage("Backend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
-                    steps {
-                        milestone 10
-                        //      stageUnitTests script: this
-                    }
+                    steps { stageUnitTests script: this }
                 }
                 stage("Backend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
-                    steps {
-                        milestone 10
-                        //stageBackendIntegrationTests script: this
-                    }
+                    steps { stageBackendIntegrationTests script: this }
                 }
                 stage("Frontend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
-                    steps {
-                        //stageFrontendIntegrationTests script: this
-                        milestone 10
-                    }
+                    steps { stageFrontendIntegrationTests script: this }
                 }
                 stage("Frontend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
-                    steps {
-                        //stageFrontendUnitTests script: this
-                        milestone 10
-                    }
+                    steps { stageFrontendUnitTests script: this }
                 }
                 stage("NPM Dependency Audit") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
-                    steps {
-                        //stageNpmAudit script: this
-                        milestone 10
-                    }
+                    steps { stageNpmAudit script: this }
                 }
             }
         }
@@ -88,17 +64,11 @@ pipeline {
             parallel {
                 stage("End to End Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
-                    steps {
-                        //stageEndToEndTests script: this
-                        milestone 10
-                    }
+                    steps { stageEndToEndTests script: this }
                 }
                 stage("Performance Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
-                   steps {
-                       milestone 10
-                       //stagePerformanceTests script: this
-                    }
+                    steps { stagePerformanceTests script: this }
                 }
             }
         }
@@ -108,7 +78,6 @@ pipeline {
             steps {
                 milestone 50
                 //stageS4SdkQualityChecks script: this
-
             }
         }
 
@@ -117,38 +86,23 @@ pipeline {
             parallel {
                 stage("Checkmarx Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
-                    steps {
-                        //stageCheckmarxScan script: this
-                        milestone 10
-                    }
+                    steps { stageCheckmarxScan script: this }
                 }
                 stage("WhiteSource Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
-                    steps {
-                        //stageWhitesourceScan script: this
-                        milestone 10
-                    }
+                    steps { stageWhitesourceScan script: this }
                 }
                 stage("SourceClear Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
-                    steps {
-                        //stageSourceClearScan script: this
-                        milestone 10
-                    }
+                    steps { stageSourceClearScan script: this }
                 }
                 stage("Fortify Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
-                    steps {
-                        //stageFortifyScan script: this
-                        milestone 10
-                    }
+                    steps { stageFortifyScan script: this }
                 }
                 stage("Additional Tools") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
-                    steps {
-                        //stageAdditionalTools script: this
-                        milestone 10
-                    }
+                    steps { stageAdditionalTools script: this }
                 }
             }
         }
@@ -158,18 +112,13 @@ pipeline {
             steps {
                 milestone 70
                 //stageArtifactDeployment script: this
-
             }
         }
 
         stage('Production Deployment') {
             when { expression { commonPipelineEnvironment.configuration.runStage.PRODUCTION_DEPLOYMENT } }
             //milestone 80 is set in stageProductionDeployment
-
-            steps {
-                milestone 80
-                //stageProductionDeployment script: this
-                            }
+            steps { stageProductionDeployment script: this }
         }
 
     }
