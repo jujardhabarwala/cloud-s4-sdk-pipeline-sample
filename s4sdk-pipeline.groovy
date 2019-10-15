@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 final def pipelineSdkVersion = 'master'
-
+def milestonestate
 pipeline {
     agent any
     options {
@@ -17,13 +17,15 @@ pipeline {
                 library "s4sdk-pipeline-library@${pipelineSdkVersion}"
                 //stageInitS4sdkPipeline script: this
                 //abortOldBuilds script: this
+                milestonestate 10
             }
         }
 
         stage('Build') {
             steps {
                 milestone 20
-                sleep(100)
+
+                milestonestate 20
                // stageBuild script: this
             }
         }
@@ -33,49 +35,49 @@ pipeline {
                 stage("Static Code Checks") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
                     steps {
-                        sleep(100)
+                        milestonestate 30
                     // stageStaticCodeChecks script: this
                     }
                 }
                 stage("Lint") {
                     steps {
                    //     stageLint script: this
-                        sleep(100)
+                        milestonestate 40
                     }
                 }
                 stage("Backend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
                     steps {
-                        sleep(100)
+                        milestonestate 50
                         //      stageUnitTests script: this
                     }
                 }
                 stage("Backend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
                     steps {
-                        sleep(100)
-                        stageBackendIntegrationTests script: this
+                        milestonestate 60
+                        //stageBackendIntegrationTests script: this
                     }
                 }
                 stage("Frontend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
                     steps {
                         //stageFrontendIntegrationTests script: this
-                        sleep(100)
+                        milestonestate 70
                     }
                 }
                 stage("Frontend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
                     steps {
                         //stageFrontendUnitTests script: this
-                        sleep(100)
+                        milestonestate 80
                     }
                 }
                 stage("NPM Dependency Audit") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
                     steps {
                         //stageNpmAudit script: this
-                        sleep(100)
+                        milestonestate 90
                     }
                 }
             }
@@ -88,13 +90,13 @@ pipeline {
                     when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
                     steps {
                         //stageEndToEndTests script: this
-                        sleep(100)
+                        milestonestate 100
                     }
                 }
                 stage("Performance Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
                    steps {
-                       sleep(100)
+                       milestonestate 110
                        //stagePerformanceTests script: this
                     }
                 }
@@ -106,6 +108,7 @@ pipeline {
             steps {
                 milestone 50
                 //stageS4SdkQualityChecks script: this
+                milestonestate 120
             }
         }
 
@@ -116,35 +119,35 @@ pipeline {
                     when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
                     steps {
                         //stageCheckmarxScan script: this
-                        sleep(100)
+                        milestonestate 130
                     }
                 }
                 stage("WhiteSource Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
                     steps {
                         //stageWhitesourceScan script: this
-                        sleep(100)
+                        milestonestate 140
                     }
                 }
                 stage("SourceClear Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
                     steps {
                         //stageSourceClearScan script: this
-                        sleep(100)
+                            milestonestate 150
                     }
                 }
                 stage("Fortify Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
                     steps {
                         //stageFortifyScan script: this
-                        sleep(100)
+                        milestonestate 160
                     }
                 }
                 stage("Additional Tools") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
                     steps {
                         //stageAdditionalTools script: this
-                        sleep(100)
+                        milestonestate 170
                     }
                 }
             }
@@ -155,6 +158,7 @@ pipeline {
             steps {
                 milestone 70
                 //stageArtifactDeployment script: this
+                milestonestate 180
             }
         }
 
@@ -165,6 +169,7 @@ pipeline {
             steps {
                 milestone 80
                 //stageProductionDeployment script: this
+                milestonestate 190
             }
         }
 
