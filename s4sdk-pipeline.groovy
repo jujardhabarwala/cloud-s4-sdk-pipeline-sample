@@ -80,7 +80,7 @@ pipeline {
                 //stageS4SdkQualityChecks script: this
             }
         }
-
+        /*
         stage('Third-party Checks') {
             when { expression { commonPipelineEnvironment.configuration.runStage.THIRD_PARTY_CHECKS } }
             parallel {
@@ -106,12 +106,12 @@ pipeline {
                 }
             }
         }
-
+        */
         stage('Artifact Deployment') {
             when { expression { commonPipelineEnvironment.configuration.runStage.ARTIFACT_DEPLOYMENT } }
             steps {
                 milestone 70
-                stageArtifactDeployment script: this
+                //stageArtifactDeployment script: this
             }
         }
 
