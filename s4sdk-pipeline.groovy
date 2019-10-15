@@ -77,7 +77,7 @@ pipeline {
         stage('Quality Checks') {
             steps {
                 milestone 50
-                //stageS4SdkQualityChecks script: this
+                stageS4SdkQualityChecks script: this
             }
         }
         /*
