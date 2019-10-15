@@ -17,7 +17,7 @@ pipeline {
                 library "s4sdk-pipeline-library@${pipelineSdkVersion}"
                 //stageInitS4sdkPipeline script: this
                 //abortOldBuilds script: this
-                milestonestate 10
+
             }
         }
 
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 milestone 20
 
-                milestonestate 20
+
                // stageBuild script: this
             }
         }
@@ -35,27 +35,27 @@ pipeline {
                 stage("Static Code Checks") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
                     steps {
-                        milestonestate 30
+                        milestone 10
                     // stageStaticCodeChecks script: this
                     }
                 }
                 stage("Lint") {
                     steps {
                    //     stageLint script: this
-                        milestonestate 40
+                        milestone 10
                     }
                 }
                 stage("Backend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
                     steps {
-                        milestonestate 50
+                        milestone 10
                         //      stageUnitTests script: this
                     }
                 }
                 stage("Backend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
                     steps {
-                        milestonestate 60
+                        milestone 10
                         //stageBackendIntegrationTests script: this
                     }
                 }
@@ -63,21 +63,21 @@ pipeline {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
                     steps {
                         //stageFrontendIntegrationTests script: this
-                        milestonestate 70
+                        milestone 10
                     }
                 }
                 stage("Frontend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
                     steps {
                         //stageFrontendUnitTests script: this
-                        milestonestate 80
+                        milestone 10
                     }
                 }
                 stage("NPM Dependency Audit") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
                     steps {
                         //stageNpmAudit script: this
-                        milestonestate 90
+                        milestone 10
                     }
                 }
             }
@@ -90,13 +90,13 @@ pipeline {
                     when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
                     steps {
                         //stageEndToEndTests script: this
-                        milestonestate 100
+                        milestone 10
                     }
                 }
                 stage("Performance Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
                    steps {
-                       milestonestate 110
+                       milestone 10
                        //stagePerformanceTests script: this
                     }
                 }
@@ -108,7 +108,7 @@ pipeline {
             steps {
                 milestone 50
                 //stageS4SdkQualityChecks script: this
-                milestonestate 120
+
             }
         }
 
@@ -119,35 +119,35 @@ pipeline {
                     when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
                     steps {
                         //stageCheckmarxScan script: this
-                        milestonestate 130
+                        milestone 10
                     }
                 }
                 stage("WhiteSource Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
                     steps {
                         //stageWhitesourceScan script: this
-                        milestonestate 140
+                        milestone 10
                     }
                 }
                 stage("SourceClear Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
                     steps {
                         //stageSourceClearScan script: this
-                            milestonestate 150
+                        milestone 10
                     }
                 }
                 stage("Fortify Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
                     steps {
                         //stageFortifyScan script: this
-                        milestonestate 160
+                        milestone 10
                     }
                 }
                 stage("Additional Tools") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
                     steps {
                         //stageAdditionalTools script: this
-                        milestonestate 170
+                        milestone 10
                     }
                 }
             }
@@ -158,7 +158,7 @@ pipeline {
             steps {
                 milestone 70
                 //stageArtifactDeployment script: this
-                milestonestate 180
+
             }
         }
 
@@ -169,8 +169,7 @@ pipeline {
             steps {
                 milestone 80
                 //stageProductionDeployment script: this
-                milestonestate 190
-            }
+                            }
         }
 
     }
