@@ -31,44 +31,44 @@ pipeline {
             parallel {
                 stage("Static Code Checks") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
-                    steps {
+                  //  steps {
                     // stageStaticCodeChecks script: this
-                    }
+                   // }
                 }
                 stage("Lint") {
-                    steps {
+                  //  steps {
                        // stageLint script: this
-                    }
+                   // }
                 }
                 stage("Backend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
-                    steps {
+                   // steps {
                         //stageUnitTests script: this
-                    }
+                  //  }
                 }
                 stage("Backend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
-                    steps {
+                  //  steps {
                         //stageBackendIntegrationTests script: this
-                    }
+                   // }
                 }
                 stage("Frontend Integration Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
-                    steps {
+                  //  steps {
                         //stageFrontendIntegrationTests script: this
-                    }
+                  //  }
                 }
                 stage("Frontend Unit Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
-                    steps {
+                    //steps {
                         //stageFrontendUnitTests script: this
-                    }
+                   // }
                 }
                 stage("NPM Dependency Audit") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
-                    steps {
+                  //  steps {
                         //stageNpmAudit script: this
-                    }
+                  //  }
                 }
             }
         }
@@ -78,15 +78,15 @@ pipeline {
             parallel {
                 stage("End to End Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
-                    steps {
+                   // steps {
                         //stageEndToEndTests script: this
-                    }
+                   // }
                 }
                 stage("Performance Tests") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
-                    steps {
+                   // steps {
                         //stagePerformanceTests script: this
-                    }
+                   // }
                 }
             }
         }
@@ -104,33 +104,33 @@ pipeline {
             parallel {
                 stage("Checkmarx Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
-                    steps {
+                  //  steps {
                         //stageCheckmarxScan script: this
-                    }
+                  //  }
                 }
                 stage("WhiteSource Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
-                    steps {
+                  //  steps {
                         //stageWhitesourceScan script: this
-                    }
+                   // }
                 }
                 stage("SourceClear Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
-                    steps {
+                 //   steps {
                         //stageSourceClearScan script: this
-                    }
+                  //  }
                 }
                 stage("Fortify Scan") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
-                    steps {
+                //    steps {
                         //stageFortifyScan script: this
-                    }
+                  //  }
                 }
                 stage("Additional Tools") {
                     when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
-                    steps {
+                  //  steps {
                         //stageAdditionalTools script: this
-                    }
+                  //  }
                 }
             }
         }
