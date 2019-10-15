@@ -111,7 +111,7 @@ pipeline {
             when { expression { commonPipelineEnvironment.configuration.runStage.ARTIFACT_DEPLOYMENT } }
             steps {
                 milestone 70
-                //stageArtifactDeployment script: this
+                stageArtifactDeployment script: this
             }
         }
 
