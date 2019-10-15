@@ -58,7 +58,7 @@ pipeline {
                 }
             }
         }
-
+        /*
         stage('Remote Tests') {
             when { expression { commonPipelineEnvironment.configuration.runStage.REMOTE_TESTS } }
             parallel {
@@ -72,7 +72,7 @@ pipeline {
                 }
             }
         }
-
+        */
         stage('Quality Checks') {
             when { expression { commonPipelineEnvironment.configuration.runStage.QUALITY_CHECKS } }
             steps {
