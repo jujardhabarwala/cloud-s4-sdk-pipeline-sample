@@ -29,89 +29,69 @@ pipeline {
 
         stage('Local Tests') {
             parallel {
-                stage("Static Code Checks") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.STATIC_CODE_CHECKS } }
-                    steps { stageStaticCodeChecks script: this }
-                }
-                stage("Lint") {
-                    steps { stageLint script: this }
-                }
-                stage("Backend Unit Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_UNIT_TESTS } }
-                    steps { stageUnitTests script: this }
-                }
-                stage("Backend Integration Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.BACKEND_INTEGRATION_TESTS } }
-                    steps { stageBackendIntegrationTests script: this }
-                }
-                stage("Frontend Integration Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_INTEGRATION_TESTS } }
-                    steps { stageFrontendIntegrationTests script: this }
-                }
+                //   stage("Static Code Checks") { steps { stageStaticCodeChecks script: this } }
+                stage("Backend Unit Tests") { steps { stageUnitTests script: this } }
+                stage("Backend Integration Tests") { steps { stageIntegrationTests script: this } }
                 stage("Frontend Unit Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONTEND_UNIT_TESTS } }
+                    when { expression { commonPipelineEnvironment.configuration.runStage.FRONT_END_TESTS } }
                     steps { stageFrontendUnitTests script: this }
                 }
-                stage("NPM Dependency Audit") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.NPM_AUDIT } }
-                    steps { stageNpmAudit script: this }
-                }
             }
         }
+
         /*
-        stage('Remote Tests') {
-            when { expression { commonPipelineEnvironment.configuration.runStage.REMOTE_TESTS } }
-            parallel {
-                stage("End to End Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
-                    steps { stageEndToEndTests script: this }
-                }
-                stage("Performance Tests") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
-                    steps { stagePerformanceTests script: this }
+            stage('Remote Tests') {
+                when { expression { commonPipelineEnvironment.configuration.runStage.REMOTE_TESTS } }
+                parallel {
+                    stage("End to End Tests") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.E2E_TESTS } }
+                        steps { stageEndToEndTests script: this }
+                    }
+                    stage("Performance Tests") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.PERFORMANCE_TESTS } }
+                        steps { stagePerformanceTests script: this }
+                    }
                 }
             }
-        }
         */
         stage('Quality Checks') {
-            when { expression { commonPipelineEnvironment.configuration.runStage.QUALITY_CHECKS } }
             steps {
                 milestone 50
                 //stageS4SdkQualityChecks script: this
             }
         }
         /*
-        stage('Third-party Checks') {
-            when { expression { commonPipelineEnvironment.configuration.runStage.THIRD_PARTY_CHECKS } }
-            parallel {
-                stage("Checkmarx Scan") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
-                    steps { stageCheckmarxScan script: this }
-                }
-                stage("WhiteSource Scan") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
-                    steps { stageWhitesourceScan script: this }
-                }
-                stage("SourceClear Scan") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
-                    steps { stageSourceClearScan script: this }
-                }
-                stage("Fortify Scan") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
-                    steps { stageFortifyScan script: this }
-                }
-                stage("Additional Tools") {
-                    when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
-                    steps { stageAdditionalTools script: this }
+            stage('Third-party Checks') {
+                when { expression { commonPipelineEnvironment.configuration.runStage.THIRD_PARTY_CHECKS } }
+                parallel {
+                    stage("Checkmarx Scan") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.CHECKMARX_SCAN } }
+                        steps { stageCheckmarxScan script: this }
+                    }
+                    stage("WhiteSource Scan") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.WHITESOURCE_SCAN } }
+                        steps { stageWhitesourceScan script: this }
+                    }
+                    stage("SourceClear Scan") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.SOURCE_CLEAR_SCAN } }
+                        steps { stageSourceClearScan script: this }
+                    }
+                    stage("Fortify Scan") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.FORTIFY_SCAN } }
+                        steps { stageFortifyScan script: this }
+                    }
+                    stage("Additional Tools") {
+                        when { expression { commonPipelineEnvironment.configuration.runStage.ADDITIONAL_TOOLS } }
+                        steps { stageAdditionalTools script: this }
+                    }
                 }
             }
-        }
-        */
-        stage('Artifact Deployment') {
+            */
+       /* stage('Artifact Deployment') {
             when { expression { commonPipelineEnvironment.configuration.runStage.ARTIFACT_DEPLOYMENT } }
             steps {
                 milestone 70
-                //stageArtifactDeployment script: this
+                stageArtifactDeployment script: this
             }
         }
 
@@ -122,24 +102,62 @@ pipeline {
         }
 
     }
+
+        */
     post {
         always {
             script {
-                postActionArchiveDebugLog script: this
-                if (commonPipelineEnvironment?.configuration?.runStage?.SEND_NOTIFICATION) {
+                if (commonPipelineEnvironment.configuration.runStage?.SEND_NOTIFICATION) {
                     postActionSendNotification script: this
                 }
-                postActionCleanupStashesLocks script:this
                 sendAnalytics script:this
             }
         }
         success {
             script {
-                if (commonPipelineEnvironment?.configuration?.runStage?.ARCHIVE_REPORT) {
-                    postActionArchiveReport script: this
+
+                echo " ${env.CHANGE_ID} --  "
+
+                if (env.CHANGE_ID != null) {
+                    def custcomm = """Pull Request Number ${pullRequest.number} 
+		with title ${pullRequest.title} 
+		for branch ${pullRequest.headRef} and
+		commit number ${pullRequest.commitCount} 
+		is Successfull, Please check Jenkins log and accordingly create an issue"""
+
+                    pullRequest.comment("$custcomm")
+                    pullRequest.addLabels(['BuildSuccess'])
+
                 }
+                //echo "Hello World--2"
             }
         }
-        failure { deleteDir() }
+        failure {
+            script {
+                // CHANGE_ID is set only for pull requests, so it is safe to access the pullRequest global variable
+                //echo "Hello World "
+                //echo "env - ${env.CHANGE_ID}"
+
+                if (env.CHANGE_ID) {
+                    def custcomm = """Pull Request Number ${pullRequest.number}
+			with title ${pullRequest.title} 
+			for branch ${pullRequest.headRef} and
+			commit number ${pullRequest.commitCount} 
+			has failed, Please check Jenkins log and accordingly create an issue"""
+
+                    //echo "comment - $custcomm"
+
+                    pullRequest.comment("$custcomm")
+                    pullRequest.addLabels(['bug'])
+                }
+                //echo "Hello World--1"
+            }
+            /*script {
+                echo "Github repo ${commonPipelineEnvironment.githubRepo}"
+                properties([[$class: 'GithubProjectProperty', projectUrlStr: "${commonPipelineEnvironment.githubRepo}"]])
+            }*/
+            /*step([$class: 'GitHubIssueNotifier', issueAppend: true, issueLabel: '', issueTitle: "$JOB_NAME $BUILD_DISPLAY_NAME failedBuild"])*/
+            deleteDir()
+        }
     }
 }
